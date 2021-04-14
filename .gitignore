@@ -1,1 +1,4 @@
-/backend
+backend/.serverless/*
+backend/.webpack/*
+backend/node_modules/*
+
