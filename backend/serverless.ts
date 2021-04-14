@@ -2,6 +2,8 @@ import type { AWS } from '@serverless/typescript';
 
 import hello from '@functions/http/hello';
 import auth from '@functions/auth';
+import getNoteReq from '@functions/http/getNoteReq';
+import postNoteReq from '@functions/http/postNoteReq';
 
 const serverlessConfiguration: AWS = {
   service: 'keep-lite',
@@ -28,7 +30,12 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: '20201221',
   },
   // import the function via paths
-  functions: { hello, auth },
+  functions: { 
+    hello, 
+    auth,
+    getNoteReq,
+    postNoteReq
+  },
 };
 
 module.exports = serverlessConfiguration;

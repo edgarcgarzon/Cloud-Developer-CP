@@ -5,11 +5,11 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import {holaSchema} from './holaSchema';
 
-const hello: ValidatedEventAPIGatewayProxyEvent<typeof holaSchema> = async (event) => {
-  return formatJSONResponse({
+const api: ValidatedEventAPIGatewayProxyEvent<typeof holaSchema> = async (event) => {
+  return formatJSONResponse(200, {
     message: `Hello ${event.body.name}, welcome to the exciting Serverless world!`,
     event,
   });
 }
 
-export const main = middyfy(hello);
+export const main = middyfy(api);
