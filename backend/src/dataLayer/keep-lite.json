@@ -1,0 +1,245 @@
+{
+  "ModelName": "keep-lite2",
+  "ModelMetadata": {
+    "Author": "Edgar Garzon",
+    "DateCreated": "Apr 15, 2021, 06:16 PM",
+    "DateLastModified": "Apr 16, 2021, 02:56 PM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "2.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "keep-lite-2",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "userId",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "permissions",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "payload",
+          "AttributeType": "M"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "SGI1",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "userId",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "PK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "userId": {
+            "S": "USER#AAA"
+          },
+          "payload": {
+            "M": {
+              "body": {
+                "S": "some message"
+              },
+              "label": {
+                "S": "todo"
+              },
+              "images": {
+                "SS": [
+                  "Giraffe.jpg",
+                  "Hippo.png",
+                  "Zebra.gif"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "SHARE | USER#BBB"
+          },
+          "userId": {
+            "S": "USER#BBB"
+          },
+          "permissions": {
+            "S": "RW"
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "SHARE | USER#CCC"
+          },
+          "userId": {
+            "S": "USER#CCC"
+          },
+          "permissions": {
+            "S": "RW"
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "userId": {
+            "S": "USER#BBB"
+          },
+          "payload": {
+            "M": {
+              "body": {
+                "S": "some message"
+              },
+              "label": {
+                "S": "todo"
+              },
+              "images": {
+                "SS": [
+                  "Giraffe.jpg",
+                  "Hippo.png",
+                  "Zebra.gif"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "SHARE | USER#AAA"
+          },
+          "userId": {
+            "S": "USER#AAA"
+          },
+          "permissions": {
+            "S": "R"
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "SHARE | USER#CCC"
+          },
+          "userId": {
+            "S": "USER#CCC"
+          },
+          "permissions": {
+            "S": "R"
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#333"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "userId": {
+            "S": "USER#AAA"
+          },
+          "payload": {
+            "M": {
+              "body": {
+                "S": "some message"
+              },
+              "label": {
+                "S": "todo"
+              },
+              "images": {
+                "SS": [
+                  "Giraffe.jpg",
+                  "Hippo.png",
+                  "Zebra.gif"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#444"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "userId": {
+            "S": "USER#AAA"
+          },
+          "payload": {
+            "M": {
+              "body": {
+                "S": "some message"
+              },
+              "label": {
+                "S": "todo"
+              },
+              "images": {
+                "SS": [
+                  "Giraffe.jpg",
+                  "Hippo.png",
+                  "Zebra.gif"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#444"
+          },
+          "SK": {
+            "S": "SHARE | USER#BBB"
+          },
+          "userId": {
+            "S": "USER#BBB"
+          },
+          "permissions": {
+            "S": "RW"
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      }
+    }
+  ]
+}

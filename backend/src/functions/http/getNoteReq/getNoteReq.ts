@@ -12,7 +12,7 @@ const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise
   
   logger.info("path parameters: " + JSON.stringify(event.queryStringParameters));
 
-  const label = event.queryStringParameters?.label;
+  const {label} = event.queryStringParameters;
   const userId = getUserId(event);
   const notes = await new noteLogic().getNote(userId, label);
   

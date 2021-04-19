@@ -1,13 +1,14 @@
 import 'source-map-support/register';
-
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/apiGateway';
 import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
-import {holaSchema} from './holaSchema';
+import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
 
-const api: ValidatedEventAPIGatewayProxyEvent<typeof holaSchema> = async (event) => {
+const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  
+  const {name} = JSON.parse(event.body);
+  
   return formatJSONResponse(200, {
-    message: `Hello ${event.body.name}, welcome to the exciting Serverless world!`,
+    message: `Hello ${name} welcome to the exciting Serverless world!`,
     event,
   });
 }

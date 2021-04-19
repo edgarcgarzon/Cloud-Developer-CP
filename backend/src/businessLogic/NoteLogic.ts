@@ -15,7 +15,7 @@ export class noteLogic{
 
         //Create the complete body of the note before add it into the DB
         var newNote: note ={
-            postId: uuid.v4(),
+            noteId: uuid.v4(),
             userId: userId,
             body: note.body? note.body: "",
             label: note.label? note.label: "",
