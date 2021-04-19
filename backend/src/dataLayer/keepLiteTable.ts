@@ -36,7 +36,7 @@ export default {
                         KeyType: "HASH"
                     },
                     {
-                        AttributeName: "SK",
+                        AttributeName: "PK",
                         KeyType: "RANGE"
                     }
                 ],

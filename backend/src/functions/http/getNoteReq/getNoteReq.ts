@@ -14,8 +14,8 @@ const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise
   const notes = await new noteLogic().getNote(userId);
   
   if(!notes){
-    formatJSONResponse(404,  {
-      message: "messages: Not notes for the user can be found"
+    return formatJSONResponse(404,  {
+      message: "Error: Not notes for the user can be found"
     });
   }
 

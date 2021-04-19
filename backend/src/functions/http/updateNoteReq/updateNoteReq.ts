@@ -13,18 +13,19 @@ export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): 
   
   const userId = getUserId(event);
   const body:noteInit = JSON.parse(event.body);
-  logger.info("Note input: " + event.body);
+  const {noteId} = event.pathParameters;
 
-  const notes = await new noteLogic().putNote(userId, body);
+  logger.info(`Update NoteId ${noteId} with input: ${event.body}`);
+  const note = await new noteLogic().updateNote(userId, noteId, body);
 
-  if(!notes){
+  if(!note){
     return formatJSONResponse(502,  {
-      message: "Error: posting note"
+      message: `Error: updating note ${noteId}`
     });
   }
   
   return formatJSONResponse(200,  {
-    message: notes
+    message: note
   });
 }
 

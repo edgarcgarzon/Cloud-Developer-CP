@@ -4,6 +4,7 @@ import hello from '@functions/http/hello';
 import auth from '@functions/auth';
 import getNoteReq from '@functions/http/getNoteReq';
 import postNoteReq from '@functions/http/postNoteReq';
+import updateNoteReq from '@functions/http/updateNoteReq';
 import NoteLiteTable from '@dataLayer/keepLiteTable'
 
 const serverlessConfiguration: AWS = {
@@ -41,7 +42,8 @@ const serverlessConfiguration: AWS = {
     hello, 
     auth,
     getNoteReq,
-    postNoteReq
+    postNoteReq,
+    updateNoteReq
   },
   //--------------------------------------------------------
   resources:{

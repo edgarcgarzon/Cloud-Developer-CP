@@ -8,6 +8,7 @@ export const DbItemSchema = {
         PK: { type: "string"},
         SK: { type: "string"},
         userId: {type: "string"},
+        permissions:{type: "string"},
         payload: {
             type: "object",
             properties: {
@@ -23,8 +24,7 @@ export const DbItemSchema = {
             }
         },
     },
-    required:["PK", "SK", "userId"],
-    additionalProperties: false
+    required:["PK", "SK", "userId", "permissions", "payload"]
     
 } as const;
 
@@ -37,6 +37,6 @@ export interface DbItem extends FromSchema<typeof DbItemSchema> {}
  */
 export function convNotetoDBItem(note: Note): DbItem{
     const {noteId, ...others} = note;
-    return {PK: note.noteId, SK: "BODY", ...others} as DbItem;
+    return {PK: note.noteId, SK: "BODY", permissions: "O", ...others} as DbItem;
 }
 
