@@ -25,7 +25,9 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NOTE_LITE_TABLE: "NOTE_LITE_TABLE-${self:provider.stage}",
-      NOTE_LITE_SGI1: "NOTE_LITE_SGI1-${self:provider.stage}"
+      NOTE_LITE_SGI1: "NOTE_LITE_SGI1-${self:provider.stage}",
+      SLS_APP_M2M_CLIENT_ID: "${ssm:/serverless-app-M2M-ClientID~true}",
+      SLS_APP_M2M_CLIENT_SECRET: "${ssm:/serverless-app-M2M-ClientSecret~true}"
     },
     tracing:{
       lambda: true,
