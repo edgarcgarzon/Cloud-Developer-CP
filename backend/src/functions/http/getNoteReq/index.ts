@@ -10,13 +10,6 @@ export default {
         method: 'get',
         path: 'note',
         authorizer: 'auth',
-        request: {
-          parameters:{
-            querystrings: {
-              label:false
-            }
-          }
-        }
       }      
     }
   ]

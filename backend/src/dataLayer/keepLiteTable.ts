@@ -1,7 +1,7 @@
 export default {
     Type: "AWS::DynamoDB::Table",
     Properties: {
-        TableName: "keep-lite",
+        TableName: "${self:provider.environment.NOTE_LITE_TABLE}",
         BillingMode: "PAY_PER_REQUEST",
         AttributeDefinitions: [
             {
@@ -29,14 +29,14 @@ export default {
         ],
         GlobalSecondaryIndexes: [
             {
-                IndexName: "SGI1",
+                IndexName: "${self:provider.environment.NOTE_LITE_SGI1}",
                 KeySchema: [
                     {
                         AttributeName: "userId",
                         KeyType: "HASH"
                     },
                     {
-                        AttributeName: "PK",
+                        AttributeName: "SK",
                         KeyType: "RANGE"
                     }
                 ],

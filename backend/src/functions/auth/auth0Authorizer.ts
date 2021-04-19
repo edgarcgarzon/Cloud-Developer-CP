@@ -13,11 +13,11 @@ const jwksUrl = 'https://dev-yk6uhsvx.eu.auth0.com/pem'
 
 export const main = async (event: APIGatewayTokenAuthorizerEvent): Promise<CustomAuthorizerResult> => {
   
-  logger.info('Authorizing a user: ' + event.authorizationToken)
+  //logger.info('Authorizing a user: ' + event.authorizationToken)
   
   try {
     const jwtToken = await verifyToken(event.authorizationToken)
-    logger.info('User was authorized', jwtToken)
+    //logger.info('User was authorized', jwtToken)
 
     return {
       principalId: jwtToken.sub,
@@ -60,12 +60,12 @@ async function verifyToken(authHeader: string): Promise<JwtPayload> {
   
   logger.info('Verify a token ...');
   const token = getToken(authHeader)
-  logger.info('token: ' + token);
+  //logger.info('token: ' + token);
   logger.info('Get the certification ...');
   const response = await Axios.get(jwksUrl)
-  logger.info("Response certification fetch(get): " + response.data);
+ // logger.info("Response certification fetch(get): " + response.data);
 
-  logger.info("Verify token agains certification");
+  logger.info("Verify token againts certification");
   //return verify(token, response.data, { algorithms: ['RS256'] }) as JwtPayload
   return verify(token, response.data, { algorithms: ['RS256'] }) as JwtPayload
 }

@@ -9,13 +9,16 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 const logger = createLogger('getNoteReq');
 
 const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  
-  logger.info("path parameters: " + JSON.stringify(event.queryStringParameters));
 
-  const {label} = event.queryStringParameters;
   const userId = getUserId(event);
-  const notes = await new noteLogic().getNote(userId, label);
+  const notes = await new noteLogic().getNote(userId);
   
+  if(!notes){
+    formatJSONResponse(404,  {
+      message: "messages: Not notes for the user can be found"
+    });
+  }
+
   return formatJSONResponse(200,  {
     message: notes
   });
