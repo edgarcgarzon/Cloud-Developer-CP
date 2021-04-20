@@ -8,6 +8,7 @@ import { convNotetoDBItem, DbItem, DbItemSchema } from "./keepLiteTableSch";
 //const XAWS = AWSXRay.captureAWS(AWS)
 const XAWS = AWS;
 export class noteAdapter{
+
  
   constructor(
       private readonly logger = createLogger('noteAdapter'),
@@ -184,6 +185,36 @@ export class noteAdapter{
     }
 
     return item;
+  }
+
+  /**
+   * 
+   * @param noteId 
+   * @param fileId 
+   */
+  async AddAttachment(noteId: string, fileId: string): Promise<any> {
+    try {
+      //Read the permissions for the note
+      const params = {
+        TableName: this.NoteLiteTable,
+        Key: {
+          PK: noteId,
+          SK: "BODY"
+        },
+        ExpressionAttributeValues: {
+          ':attachment': [fileId],
+          ':attachmentStr': fileId
+        },
+        ConditionExpression: "not contains(payload.attachment, :attachmentStr)",
+        UpdateExpression: "set payload.attachment = list_append(payload.attachment, :attachment)",
+        ReturnValues: 'ALL_NEW',
+      };
+      return await this.docClient.update(params).promise();
+    }
+    catch (error) {
+      this.logger.error(`Error adding attachment to the item: ${noteId}: ${error} `);
+      return undefined;
+    }
   }
 }
 

@@ -37,15 +37,6 @@ export class s3Adapter {
     getUploadUrl(postId:string, fileId: string) {
 
         this.logger.info(`Get signed URL for key: ${postId}/${fileId}`)
-        
-
-        this.s3.putObject({
-          Bucket: this.attchmentBucketName,
-          Key: '1234',
-          Body: new Buffer('abcd')
-        }, (err, data) => {
-          console.log("TEST S3: " + err)
-        } );
 
         return this.s3.getSignedUrl('putObject', {
           Bucket: this.attchmentBucketName,
@@ -63,7 +54,6 @@ function CreateS3Client():AWS.S3 {
 
     if (process.env.IS_OFFLINE) {
       return new AWS.S3({
-            s3ForcePathStyle: true,
             accessKeyId: 'S3RVER', // This specific key is required when working offline
             secretAccessKey: 'S3RVER',
             endpoint: new AWS.Endpoint('http://localhost:8080'),

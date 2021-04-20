@@ -23,14 +23,14 @@ export const noteSchema = {
         body: { type: "string" },
         label: { type: "string" },
         reminder: { type: "string" },
-        image: {
+        attachment: {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
       },
-      required: ["body", "label", "reminder", "image"]
+      required: ["body", "label", "reminder", "attachment"]
     }
   },
   required:["noteId", "userId", "payload"]

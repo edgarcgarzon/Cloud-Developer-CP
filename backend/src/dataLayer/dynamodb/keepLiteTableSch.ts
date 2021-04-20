@@ -15,7 +15,7 @@ export const DbItemSchema = {
                 body: { type: "string"},
                 label: { type: "string"},
                 reminder: { type: "string"},
-                image:{   
+                attachment:{   
                     "type": "array",
                     "items": {
                         "type": "string"

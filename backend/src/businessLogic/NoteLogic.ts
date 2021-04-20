@@ -31,7 +31,7 @@ export class noteLogic{
                 body: note.body? note.body: "",
                 label: note.label? note.label: "",
                 reminder: note.reminder? note.reminder : "",
-                image: []
+                attachment: []
             }
         }
 

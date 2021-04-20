@@ -7,8 +7,9 @@ import postNoteReq from '@functions/http/postNoteReq';
 import updateNoteReq from '@functions/http/updateNoteReq';
 import shareNoteReq from '@functions/http/shareNoteReq';
 import attachmentNoteReq from '@functions/http/attachmentNoteReq';
+import attachmentEvent from '@functions/s3';
 import NoteLiteTable from '@dataLayer/dynamodb/keepLiteTable'
-import NoteLiteS3BucketAttachment from '@dataLayer/s3/S3BucketAttachment'
+import NoteLiteS3BucketAttachment from '@dataLayer/S3/S3BucketAttachment'
 
 const serverlessConfiguration: AWS = {
   service: 'keep-lite',
@@ -56,7 +57,8 @@ const serverlessConfiguration: AWS = {
     postNoteReq,
     updateNoteReq,
     shareNoteReq, 
-    attachmentNoteReq
+    attachmentNoteReq,
+    attachmentEvent,
   },
   //--------------------------------------------------------
   resources:{

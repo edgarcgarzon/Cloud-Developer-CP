@@ -2,6 +2,7 @@ backend/.serverless/*
 backend/.webpack/*
 backend/.dynamodb/*
 backend/node_modules/*
+backend/tmp/*
 client/bin/*
 client/node_modules/*
 client/.env
