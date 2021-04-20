@@ -3,12 +3,12 @@ import {createLogger} from "@libs/logger"
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { convNotetoDBItem, DbItem } from "./keepLiteTableSch";
+import { convNotetoDBItem, DbItem, DbItemSchema } from "./keepLiteTableSch";
 
 //const XAWS = AWSXRay.captureAWS(AWS)
 const XAWS = AWS;
-export class postAdapter{
-
+export class noteAdapter{
+ 
   constructor(
       private readonly logger = createLogger('noteAdapter'),
       private readonly docClient: DocumentClient = createDynamoDBClient(),
@@ -146,6 +146,35 @@ export class postAdapter{
       this.logger.error(`Error updating noteId: ${noteId}: ${error} `);
       return undefined;
     }
+  }
+
+  /**
+   * 
+   * @param noteId 
+   * @param targetUserId 
+   */
+  async shareNote(noteId: string, targetUserId: string):Promise<any> {
+
+    this.logger.info(`Add share item noteId ${noteId} with user ${targetUserId}`); 
+
+    const item = {
+      PK:noteId,
+      SK: `USER#${targetUserId}`,
+      userId: targetUserId
+    }
+
+    try{
+      await this.docClient.put({
+        TableName: this.NoteLiteTable,
+        Item: item
+      }).promise();
+    }
+    catch(error){
+      this.logger.error("Dynamodb Error: " + error )
+      throw new Error(`Error adding a share item `);
+    }
+
+    return item;
   }
 }
 

@@ -3,6 +3,4 @@ backend/.webpack/*
 backend/.dynamodb/*
 backend/node_modules/*
 client/*
-
-
-
+backend/.env

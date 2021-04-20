@@ -1,10 +1,12 @@
-import { postAdapter as noteAdapter } from "src/dataLayer/noteAdapter";
+import { noteAdapter } from "@dataLayer/dynamodb/noteAdapter";
 import { noteInit, note } from "@models/note";
 import {createLogger} from "@libs/logger"
 import * as uuid from 'uuid'
+import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
 
 
 export class noteLogic{
+
     constructor(
         private readonly logger = createLogger('NoteLogic'),
     ){
@@ -57,6 +59,37 @@ export class noteLogic{
         }
 
         return undefined;
+    }
 
-      }
+    /**
+     * 
+     * @param ownerUserId 
+     * @param noteId 
+     * @param targetUserEmail 
+     */
+    async shareNote(ownerUserId:string, noteId:string, targetUserEmail:string):Promise<any>{
+        this.logger.info(`Check for user ${ownerUserId} pemissions over the note ${noteId}`);
+        var perms = await new noteAdapter().getPerms(ownerUserId, noteId);
+
+        if(!perms.includes("O")){
+             throw new Error("User does not have enough permissions to share the note");
+        }
+
+        this.logger.info(`Check if the email ${targetUserEmail} is register to an user`)
+        var targetUserId = await new auth0Adapter().getUserIdbyEmail(targetUserEmail);
+
+        if(!targetUserId){
+            throw new Error(`Email ${targetUserEmail} is not register to any user`);
+        }
+
+        this.logger.info('Add the share item to the DB')
+        var shareItem = await new noteAdapter().shareNote(noteId, targetUserId);
+
+        if(!shareItem){
+            throw new Error(`Internal problem sharing`)
+        }
+
+        return {noteId: noteId, userId: targetUserEmail};
+    }
 }
+ 
