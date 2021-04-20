@@ -68,7 +68,7 @@ export class noteLogic{
      * @param noteId 
      * @param targetUserEmail 
      */
-    async shareNote(ownerUserId:string, noteId:string, targetUserEmail:string):Promise<any>{
+    async shareNote(ownerUserId:string, noteId:string, targetUserEmail:string, permissions:string):Promise<any>{
         this.logger.info(`Check for user ${ownerUserId} pemissions over the note ${noteId}`);
         var perms = await new noteAdapter().getPerms(ownerUserId, noteId);
 
@@ -84,13 +84,13 @@ export class noteLogic{
         }
 
         this.logger.info('Add the share item to the DB')
-        var shareItem = await new noteAdapter().shareNote(noteId, targetUserId);
+        var shareItem = await new noteAdapter().shareNote(noteId, targetUserId, permissions);
 
         if(!shareItem){
             throw new Error(`Internal problem sharing`)
         }
 
-        return {noteId: noteId, userId: targetUserEmail};
+        return {noteId: noteId, userId: targetUserEmail, permissions: permissions};
     }
 
     /**

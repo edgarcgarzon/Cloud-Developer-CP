@@ -17,7 +17,7 @@ export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): 
   const body = JSON.parse(event.body);
 
   try{
-    const res = await new noteLogic().shareNote(ownerUserId, body.noteId, body.email);
+    const res = await new noteLogic().shareNote(ownerUserId, body.noteId, body.email, body.permissions);
     return formatJSONResponse(200,  {
       message: res
     });

@@ -163,24 +163,36 @@ export class noteAdapter{
    * @param noteId 
    * @param targetUserId 
    */
-  async shareNote(noteId: string, targetUserId: string):Promise<any> {
+  async shareNote(noteId: string, targetUserId: string, permissions:string):Promise<any> {
 
-    this.logger.info(`Add share item noteId ${noteId} with user ${targetUserId}`); 
+    this.logger.info(`Add/delete share item noteId "${noteId}" with user "${targetUserId}" and permissions "${permissions}"`); 
 
     const item = {
       PK:noteId,
       SK: `USER#${targetUserId}`,
-      userId: targetUserId
+      userId: targetUserId,
+      permissions: permissions
     }
 
-    try{
-      await this.docClient.put({
-        TableName: this.NoteLiteTable,
-        Item: item
-      }).promise();
+    try {
+      if (permissions !== "") {
+        await this.docClient.put({
+          TableName: this.NoteLiteTable,
+          Item: item
+        }).promise();
+      }
+      else {
+        await this.docClient.delete({
+          TableName: this.NoteLiteTable,
+          Key:{
+            PK: item.PK,
+            SK: item.SK
+          }
+        }).promise();
+      }
     }
-    catch(error){
-      this.logger.error("Dynamodb Error: " + error )
+    catch (error) {
+      this.logger.error("Dynamodb Error: " + error)
       throw new Error(`Error adding a share item `);
     }
 
