@@ -124,6 +124,19 @@ export class noteAdapter{
    */
   async Update(noteId: string, body: noteInit):Promise<any> {
 
+   //Create the expression dynamically
+   var UpdateExpression = "set ";
+   var ExpressionAttributeValues = {}
+   for(const prop in body){
+     if(body.hasOwnProperty(prop)){
+       ExpressionAttributeValues[`:${prop}`] = body[prop];
+       UpdateExpression += `payload.${prop} = :${prop}, ` 
+     }
+   }
+   UpdateExpression = UpdateExpression.slice(0, -2); 
+   this.logger.info(`UpdateExpression: ${UpdateExpression}`);
+   this.logger.info(`ExpressionAttributeValues: ${JSON.stringify(ExpressionAttributeValues)}`)
+
     try {
       //Read the permissions for the note
       const params = {
@@ -132,12 +145,8 @@ export class noteAdapter{
           PK: noteId,
           SK: "BODY"
         },
-        ExpressionAttributeValues: {
-          ':body': body.body,
-          ':label': body.label,
-          ':reminder': body.reminder,
-        },
-        UpdateExpression: 'set payload.label = :label, payload.body = :body, payload.reminder = :reminder',
+        ExpressionAttributeValues: ExpressionAttributeValues,
+        UpdateExpression: UpdateExpression,
         ReturnValues: 'ALL_NEW',
       };
       return await this.docClient.update(params).promise();

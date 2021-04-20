@@ -14,6 +14,7 @@ const serverlessConfiguration: AWS = {
   //--------------------------------------------------------
   plugins: [
     'serverless-webpack',
+    'serverless-iam-roles-per-function',
     "serverless-dynamodb-local",
     "serverless-offline-ssm",
     'serverless-offline'

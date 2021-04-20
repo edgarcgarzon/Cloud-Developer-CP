@@ -12,5 +12,12 @@ export default {
         authorizer: 'auth',
       }      
     }
+  ],
+  iamRoleStatements:[
+    {
+      Effect: "Allow",
+      Action: ["dynamodb:Query"],
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.NOTE_LITE_TABLE}/index/${self:provider.environment.NOTE_LITE_SGI1}"
+    }
   ]
 }
