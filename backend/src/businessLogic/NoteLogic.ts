@@ -3,6 +3,7 @@ import { noteInit, note } from "@models/note";
 import {createLogger} from "@libs/logger"
 import * as uuid from 'uuid'
 import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
+import { s3Adapter } from "@dataLayer/S3/s3Adapter";
 
 
 export class noteLogic{
@@ -90,6 +91,25 @@ export class noteLogic{
         }
 
         return {noteId: noteId, userId: targetUserEmail};
+    }
+
+    /**
+     * 
+     * @param userId 
+     * @param noteId 
+     */
+    async getUrlAttachment(userId: string, noteId: string):Promise<string> {
+
+        this.logger.info(`Check for user ${userId} pemissions over the note ${noteId}`);
+        var perms = await new noteAdapter().getPerms(userId, noteId);
+
+        console.log(perms);
+
+        if(!perms.includes("O") && !perms.includes("W")){
+             throw new Error("User does not have enough permissions to attach items to the note");
+        }
+
+        return new s3Adapter().getUploadUrl(noteId, uuid.v4())
     }
 }
  

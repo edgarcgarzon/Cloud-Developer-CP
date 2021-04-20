@@ -6,7 +6,9 @@ import getNoteReq from '@functions/http/getNoteReq';
 import postNoteReq from '@functions/http/postNoteReq';
 import updateNoteReq from '@functions/http/updateNoteReq';
 import shareNoteReq from '@functions/http/shareNoteReq';
+import attachmentNoteReq from '@functions/http/attachmentNoteReq';
 import NoteLiteTable from '@dataLayer/dynamodb/keepLiteTable'
+import NoteLiteS3BucketAttachment from '@dataLayer/s3/S3BucketAttachment'
 
 const serverlessConfiguration: AWS = {
   service: 'keep-lite',
@@ -15,6 +17,7 @@ const serverlessConfiguration: AWS = {
   plugins: [
     'serverless-webpack',
     'serverless-iam-roles-per-function',
+    'serverless-s3-local',
     "serverless-dynamodb-local",
     "serverless-offline-ssm",
     'serverless-offline'
@@ -29,9 +32,11 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NOTE_LITE_TABLE: "NOTE_LITE_TABLE-${self:provider.stage}",
       NOTE_LITE_SGI1: "NOTE_LITE_SGI1-${self:provider.stage}",
+      S3_BUCKET_ATTACH: "S3_BUCKET_ATTACHMENT-${self:provider.stage}",
+      S3_BUCKET_ATTACH_SIG_URL_EXPIRATION: "3600",
       AUTH0_DOMAIN: "${ssm:auth0-domain~true}",
       AUTH0_SLS_APP_M2M_CLIENT_ID: "${ssm:auth0-serverless-app-M2M-ClientID~true}",
-      AUT0_SLS_APP_M2M_CLIENT_SECRET: "${ssm:auth0-serverless-app-M2M-ClientSecret~true}"
+      AUT0_SLS_APP_M2M_CLIENT_SECRET: "${ssm:auth0-serverless-app-M2M-ClientSecret~true}",
     },
     tracing:{
       lambda: true,
@@ -50,12 +55,14 @@ const serverlessConfiguration: AWS = {
     getNoteReq,
     postNoteReq,
     updateNoteReq,
-    shareNoteReq
+    shareNoteReq, 
+    attachmentNoteReq
   },
   //--------------------------------------------------------
   resources:{
     Resources:{
-      NoteLiteTable
+      NoteLiteTable,
+      NoteLiteS3BucketAttachment
     }
   },
   //--------------------------------------------------------
@@ -77,6 +84,11 @@ const serverlessConfiguration: AWS = {
     },
     "serverless-offline-ssm":{
       stages:['dev']
+    },
+    s3:{
+      host: "localhost",
+      port: 8080,
+      directory: "./tmp"
     }
   }
 };
