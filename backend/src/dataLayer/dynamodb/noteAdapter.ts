@@ -3,12 +3,12 @@ import {createLogger} from "@libs/logger"
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { convDBItemTonote, convNotetoDBItem, DbItem, DbItemSchema } from "./keepLiteTableSch";
-import { Console } from "node:console";
+import { convDBItemTonote, convNotetoDBItem, DbItem } from "./keepLiteTableSch";
 
 
 
 export class noteAdapter{
+
 
  
   constructor(
@@ -257,6 +257,55 @@ export class noteAdapter{
       return undefined;
     }
   }
+
+  /**
+   * 
+   * @param noteId 
+   * @param userId 
+   */
+  async delete(noteId: string) {
+
+    this.logger.info(`Delete notes`);
+    try{
+      //Read notes from DB
+      const notes = await this.docClient.query({
+        TableName: this.NoteLiteTable,
+        KeyConditionExpression: 'PK = :PK',
+        ExpressionAttributeValues: {
+          ':PK': noteId
+        },
+        ProjectionExpression: "PK, SK"
+      }).promise();
+
+      if(!notes.Items.length){
+        throw new Error("noteId not found")
+      }
+
+      //Build the delete request
+      var res:Array<any> = notes.Items;
+      this.logger.info(`items to delete: ${JSON.stringify(res)}`)
+      res.forEach((x,i) => {
+        res[i] = {
+          DeleteRequest:{ Key:{ PK:x.PK, SK:x.SK }}
+        }
+      })
+
+      //Build the requested items
+      var RequestItems = {}; 
+      RequestItems[`${this.NoteLiteTable}`] = res;
+      this.logger.info(`items to delete: ${JSON.stringify(RequestItems)}`)
+
+      //send the delete request
+      await this.docClient.batchWrite({
+        RequestItems: RequestItems
+      }).promise();
+
+    }catch(err){
+      this.logger.error(`Error deleting: ${err}`);
+      throw new Error("Internal error");
+    }
+  }
+
 }
 
 /**

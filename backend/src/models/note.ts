@@ -17,6 +17,7 @@ export const noteSchema = {
   properties: {
     noteId: { type: "string" },
     userId: { type: "string" },
+    permissions: { type: "string" },
     payload: {
       type: "object",
       properties: {
@@ -33,7 +34,7 @@ export const noteSchema = {
       required: ["body", "label", "reminder", "attachment"]
     }
   },
-  required:["noteId", "userId", "payload"]
+  required:["noteId", "userId", "permissions", "payload"]
 } as const;
 
 export interface note extends FromSchema<typeof noteSchema> { }

@@ -46,7 +46,7 @@ export function convNotetoDBItem(note: Note): DbItem{
  * @returns 
  */
  export function convDBItemTonote(item: DbItem): Note{
-    const {PK, SK, permissions, ...others} = item;
+    const {PK, SK, ...others} = item;
     return {noteId: PK, ...others} as Note;
 }
 

@@ -3,11 +3,8 @@ import { formatJSONResponse } from '@libs/apiGateway';
 import { middyfy } from '@libs/lambda';
 import { noteLogic } from '@businessLogic/NoteLogic';
 import { getUserId } from '@libs/utils';
-import {createLogger} from "@libs/logger"
 import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } from 'aws-lambda';
-import { s3Adapter } from '@dataLayer/S3/s3Adapter';
 
-const logger = createLogger('getNoteReq');
 
 const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 

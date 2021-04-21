@@ -8,21 +8,22 @@ import { s3Adapter } from "@dataLayer/S3/s3Adapter";
 
 export class noteLogic{
 
+
     constructor(
         private readonly logger = createLogger('NoteLogic'),
     ){
     }
 
-    async getNote(userId:string, share:boolean):Promise<note[]>{
+    async getNote(userId:string, share:boolean):Promise<any[]>{
         this.logger.info(`Get notes (share: ${share}) for userId ${userId}`);
         const notes =  await new noteAdapter().getNote(userId, share);
 
         //Put signed url for each attachment in the notes
-        notes.forEach(x => {
-            x.payload.attachment.forEach((a,i) => {
-                x.payload.attachment[i] = new s3Adapter().getGetUrl(x.noteId, a)
+        notes.forEach( x => {
+             x.payload.attachment = x.payload.attachment.map( id =>  
+                 id + " : " + new s3Adapter().getGetUrl(x.noteId, id)
+                )
             })
-        });
 
         return notes;
     }
@@ -119,6 +120,24 @@ export class noteLogic{
         }
 
         return new s3Adapter().getUploadUrl(noteId, uuid.v4())
+    }
+
+    /**
+     * 
+     * @param userId 
+     * @param noteId 
+     */
+    async deleteNote(userId: string, noteId: string) {
+
+        const noteAdapterHdl = new noteAdapter();
+        const perms = await noteAdapterHdl.getPerms(userId, noteId);
+
+        if(!perms.includes("O")){
+            throw new Error("User does not have enough permission to delete the note")
+        }
+
+        //Delete note
+        await noteAdapterHdl.delete(noteId);
     }
 }
  

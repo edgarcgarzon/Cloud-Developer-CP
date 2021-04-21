@@ -6,6 +6,7 @@ import getNoteReq from '@functions/http/getNoteReq';
 import postNoteReq from '@functions/http/postNoteReq';
 import updateNoteReq from '@functions/http/updateNoteReq';
 import shareNoteReq from '@functions/http/shareNoteReq';
+import deleteNoteReq from '@functions/http/deleteNoteReq';
 import attachmentNoteReq from '@functions/http/attachmentNoteReq';
 import attachmentEvent from '@functions/s3';
 import NoteLiteTable from '@dataLayer/dynamodb/keepLiteTable'
@@ -33,7 +34,7 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NOTE_LITE_TABLE: "NOTE_LITE_TABLE-${self:provider.stage}",
       NOTE_LITE_SGI1: "NOTE_LITE_SGI1-${self:provider.stage}",
-      S3_BUCKET_ATTACH: "note-lite-s3-bucket-attachment-${self:provider.stage}",
+      S3_BUCKET_ATTACH: "note_lite_s3_bucket_attachment-${self:provider.stage}",
       S3_BUCKET_ATTACH_SIG_URL_EXPIRATION: "3600",
       AUTH0_DOMAIN: "${ssm:auth0-domain~true}",
       AUTH0_SLS_APP_M2M_CLIENT_ID: "${ssm:auth0-serverless-app-M2M-ClientID~true}",
@@ -59,6 +60,7 @@ const serverlessConfiguration: AWS = {
     shareNoteReq, 
     attachmentNoteReq,
     attachmentEvent,
+    deleteNoteReq
   },
   //--------------------------------------------------------
   resources:{
