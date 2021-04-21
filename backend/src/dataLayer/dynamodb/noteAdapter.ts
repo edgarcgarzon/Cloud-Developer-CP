@@ -3,10 +3,11 @@ import {createLogger} from "@libs/logger"
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
-import { convNotetoDBItem, DbItem, DbItemSchema } from "./keepLiteTableSch";
+import { convDBItemTonote, convNotetoDBItem, DbItem, DbItemSchema } from "./keepLiteTableSch";
+import { Console } from "node:console";
 
-//const XAWS = AWSXRay.captureAWS(AWS)
-const XAWS = AWS;
+
+
 export class noteAdapter{
 
  
@@ -38,16 +39,18 @@ export class noteAdapter{
         }
       }).promise();
 
-      //Filter and send notes
+      //Filter, convert and send notes
       notes.Items.filter(x => x.SK == "BODY")
+      notes.Items.forEach((x,i) => {
+        notes.Items[i] = convDBItemTonote(x as DbItem)
+      })
+
       return notes.Items as note[];
     }
     catch (error) {
       this.logger.error("Dynamodb Error: " + error )
       return undefined;
     }
-
-
   }
 
   /**
@@ -237,11 +240,11 @@ export class noteAdapter{
 function createDynamoDBClient() {
     if (process.env.IS_OFFLINE) {
       console.log('<OFFLINE:> Creating a local DynamoDB instance')
-      return new XAWS.DynamoDB.DocumentClient({
+      return new AWS.DynamoDB.DocumentClient({
         region: 'localhost',
         endpoint: 'http://localhost:8000'
       })
     }
-  
+    const XAWS = AWSXRay.captureAWS(AWS)
     return new XAWS.DynamoDB.DocumentClient()
   }

@@ -15,7 +15,16 @@ export class noteLogic{
 
     async getNote(userId:string):Promise<note[]>{
         this.logger.info("Get notes for userId " + userId);
-        return await new noteAdapter().getNote(userId);
+        const notes =  await new noteAdapter().getNote(userId);
+
+        //Put signed url for each attachment in the notes
+        notes.forEach(x => {
+            x.payload.attachment.forEach((a,i) => {
+                x.payload.attachment[i] = new s3Adapter().getGetUrl(x.noteId, a)
+            })
+        });
+
+        return notes;
     }
 
     async putNote(userId: string, note:noteInit):Promise<note>{

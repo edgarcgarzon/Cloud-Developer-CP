@@ -40,3 +40,13 @@ export function convNotetoDBItem(note: Note): DbItem{
     return {PK: note.noteId, SK: "BODY", permissions: "O", ...others} as DbItem;
 }
 
+/**
+ * Convert note into DbItem
+ * @param note 
+ * @returns 
+ */
+ export function convDBItemTonote(item: DbItem): Note{
+    const {PK, SK, permissions, ...others} = item;
+    return {noteId: PK, ...others} as Note;
+}
+
