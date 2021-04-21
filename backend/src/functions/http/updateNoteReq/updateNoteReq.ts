@@ -10,23 +10,23 @@ import {createLogger} from "@libs/logger"
 const logger = createLogger('postNoteReq');
 
 export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  
+
   const userId = getUserId(event);
-  const body:noteInit = JSON.parse(event.body);
-  const {noteId} = event.pathParameters;
+  const body: noteInit = JSON.parse(event.body);
+  const { noteId } = event.pathParameters;
 
-  logger.info(`Update NoteId ${noteId} with input: ${event.body}`);
-  const note = await new noteLogic().updateNote(userId, noteId, body);
-
-  if(!note){
-    return formatJSONResponse(502,  {
-      message: `Error: updating note ${noteId}`
+  try {
+    logger.info(`Update NoteId ${noteId} with input: ${event.body}`);
+    const note = await new noteLogic().updateNote(userId, noteId, body);
+    return formatJSONResponse(200, {
+      message: note
     });
   }
-  
-  return formatJSONResponse(200,  {
-    message: note
-  });
+  catch (err) {
+    return formatJSONResponse(502, {
+      message: `${err}`
+    });
+  }
 }
 
 export const main = middyfy(api);

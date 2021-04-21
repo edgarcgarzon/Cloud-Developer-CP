@@ -25,7 +25,7 @@ export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): 
   catch(err){
 
     return formatJSONResponse(502,  {
-      message: `Error: ${err}`
+      message: `${err}` 
     });
   }
 }

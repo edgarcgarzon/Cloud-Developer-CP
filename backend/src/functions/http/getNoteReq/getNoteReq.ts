@@ -12,8 +12,9 @@ const logger = createLogger('getNoteReq');
 const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
   const userId = getUserId(event);
-  const notes = await new noteLogic().getNote(userId);
-  
+  const share = (event.queryStringParameters?.share.toLocaleLowerCase() === 'true');
+  const notes = await new noteLogic().getNote(userId, share);
+
   if(!notes){
     return formatJSONResponse(404,  {
       message: "Error: Not notes for the user can be found"

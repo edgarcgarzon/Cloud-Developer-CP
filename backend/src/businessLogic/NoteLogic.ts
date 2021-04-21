@@ -13,9 +13,9 @@ export class noteLogic{
     ){
     }
 
-    async getNote(userId:string):Promise<note[]>{
-        this.logger.info("Get notes for userId " + userId);
-        const notes =  await new noteAdapter().getNote(userId);
+    async getNote(userId:string, share:boolean):Promise<note[]>{
+        this.logger.info(`Get notes (share: ${share}) for userId ${userId}`);
+        const notes =  await new noteAdapter().getNote(userId, share);
 
         //Put signed url for each attachment in the notes
         notes.forEach(x => {
@@ -68,7 +68,7 @@ export class noteLogic{
             return await new noteAdapter().Update(noteId, body);
         }
 
-        return undefined;
+        throw new Error(`User does not have enough permissions to update the note`)
     }
 
     /**

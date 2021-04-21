@@ -14,8 +14,8 @@ export class noteAdapter{
   constructor(
       private readonly logger = createLogger('noteAdapter'),
       private readonly docClient: DocumentClient = createDynamoDBClient(),
-      private readonly NoteLiteTable = process.env.NOTE_LITE_TABLE,
-      private readonly NoteLiteGSI1 = process.env.NOTE_LITE_SGI1){
+      private readonly NoteLiteTable:string = process.env.NOTE_LITE_TABLE,
+      private readonly NoteLiteGSI1:string = process.env.NOTE_LITE_SGI1){
 
   }
 
@@ -24,7 +24,7 @@ export class noteAdapter{
    * @param userId 
    * @returns 
    */
-  async getNote(userId:string):Promise<note[]>{
+  async getNote(userId:string, shared:boolean = false):Promise<note[]>{
 
     this.logger.info("Get items from DB for userId " + userId);
 
@@ -39,17 +39,43 @@ export class noteAdapter{
         }
       }).promise();
 
-      //Filter, convert and send notes
-      notes.Items.filter(x => x.SK == "BODY")
-      notes.Items.forEach((x,i) => {
-        notes.Items[i] = convDBItemTonote(x as DbItem)
-      })
+      var res: Array<any> = notes.Items;
 
-      return notes.Items as note[];
+      //If not the note requested were no the ones shared
+      if (!shared) {
+        //Filter
+        res = res.filter(x => x.SK == "BODY")
+      }
+      else{
+
+        //Get the share items, build the array for query
+        res = res.filter(x => x.SK.includes("SHARE#"));
+        if(!res.length){return res;}
+        res.forEach((x,i) => {res[i] = {PK: x["PK"], SK: "BODY"}});
+
+        var RequestItems = {}; 
+        RequestItems[`${this.NoteLiteTable}`] = {Keys: res};
+
+        this.logger.info(`Shared items to search: ${JSON.stringify(RequestItems)}`);
+
+        //Query the main table
+        const sharedNotes = await this.docClient.batchGet({
+          RequestItems: RequestItems
+        }).promise();
+
+        res = sharedNotes.Responses[`${this.NoteLiteTable}`];
+
+      }
+
+      //convert to Note
+      res.forEach((x, i) => {
+        res[i] = convDBItemTonote(x as DbItem)
+      })
+      return res as note[];
     }
     catch (error) {
       this.logger.error("Dynamodb Error: " + error )
-      return undefined;
+      throw new Error("Internal error")
     }
   }
 
@@ -157,7 +183,7 @@ export class noteAdapter{
     }
     catch (error) {
       this.logger.error(`Error updating noteId: ${noteId}: ${error} `);
-      return undefined;
+      throw new Error("Internal problem")
     }
   }
 
@@ -172,7 +198,7 @@ export class noteAdapter{
 
     const item = {
       PK:noteId,
-      SK: `USER#${targetUserId}`,
+      SK: `SHARE#${targetUserId}`,
       userId: targetUserId,
       permissions: permissions
     }
