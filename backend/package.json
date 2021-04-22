@@ -5,6 +5,7 @@
   "main": "serverless.ts",
   "scripts": {
     "scan": "aws dynamodb scan --table-name NOTE_LITE_TABLE-dev --endpoint-url http://localhost:8000",
+    "sqs": "aws sqs --endpoint-url http://localhost:9324 create-queue --queue-name SQS_NOTIFICATION}-dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -29,6 +30,7 @@
     "serverless-dynamodb-local": "^0.2.38",
     "serverless-iam-roles-per-function": "^3.1.0",
     "serverless-offline": "^6.9.0",
+    "serverless-offline-sqs": "^4.1.1",
     "serverless-offline-ssm": "^5.2.0",
     "serverless-s3-local": "^0.6.14",
     "serverless-webpack": "^5.3.5",

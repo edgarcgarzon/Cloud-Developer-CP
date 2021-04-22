@@ -5,6 +5,7 @@ import * as uuid from 'uuid'
 import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
 import { s3Adapter } from "@dataLayer/S3/s3Adapter";
 import { iUser } from "@models/user";
+import { SQSAdapter } from "@dataLayer/sqs/SQSAdapter";
 
 
 export class noteLogic{
@@ -72,7 +73,11 @@ export class noteLogic{
             body["LastUpdateBy"] = user.email;
             body["LastUpdateOn"] = new Date().toLocaleString();
             this.logger.info(`Update the note Id: ${noteId} with ${JSON.stringify(body)}` );
-            return await new noteAdapter().Update(noteId, body);
+            const note = await new noteAdapter().Update(noteId, body);
+
+            new SQSAdapter().sendMessage("Message update",{user: user, noteId:noteId, body: body})
+
+            return note;
         }
 
         throw new Error(`User does not have enough permissions to update the note`)

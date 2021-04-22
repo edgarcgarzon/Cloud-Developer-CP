@@ -9,8 +9,10 @@ import shareNoteReq from '@functions/http/shareNoteReq';
 import deleteNoteReq from '@functions/http/deleteNoteReq';
 import attachmentNoteReq from '@functions/http/attachmentNoteReq';
 import attachmentEvent from '@functions/s3';
-import NoteLiteTable from '@dataLayer/dynamodb/keepLiteTable'
-import NoteLiteS3BucketAttachment from '@dataLayer/S3/S3BucketAttachment'
+import notificationEvent from '@functions/sqs';
+import DynamoDBNoteLiteTable from '@dataLayer/dynamodb/keepLiteTable'
+import S3BucketAttachment from '@dataLayer/S3/S3BucketAttachment'
+import SQSNotification from '@dataLayer/sqs/SQSNotification'
 
 const serverlessConfiguration: AWS = {
   service: 'keep-lite',
@@ -22,7 +24,9 @@ const serverlessConfiguration: AWS = {
     'serverless-s3-local',
     "serverless-dynamodb-local",
     "serverless-offline-ssm",
-    'serverless-offline'
+    "serverless-offline-sqs", 
+    'serverless-offline',
+   
   ],
   //--------------------------------------------------------
   provider: {
@@ -39,6 +43,7 @@ const serverlessConfiguration: AWS = {
       AUTH0_DOMAIN: "${ssm:auth0-domain~true}",
       AUTH0_SLS_APP_M2M_CLIENT_ID: "${ssm:auth0-serverless-app-M2M-ClientID~true}",
       AUT0_SLS_APP_M2M_CLIENT_SECRET: "${ssm:auth0-serverless-app-M2M-ClientSecret~true}",
+      SQS_NOTIFICATION: "SQS_NOTIFICATION-${self:provider.stage}"
     },
     tracing:{
       lambda: true,
@@ -60,13 +65,15 @@ const serverlessConfiguration: AWS = {
     shareNoteReq, 
     attachmentNoteReq,
     attachmentEvent,
-    deleteNoteReq
+    deleteNoteReq,
+    notificationEvent
   },
   //--------------------------------------------------------
   resources:{
     Resources:{
-      NoteLiteTable,
-      NoteLiteS3BucketAttachment
+      DynamoDBNoteLiteTable,
+      S3BucketAttachment,
+      SQSNotification
     }
   },
   //--------------------------------------------------------
@@ -93,6 +100,14 @@ const serverlessConfiguration: AWS = {
       host: "localhost",
       port: 8080,
       directory: "./tmp"
+    },
+    "serverless-offline-sqs": {
+      autoCreate: true,
+      endpoint: 'http://0.0.0.0:9324',
+      region: "${self:provider.region}",
+      accessKeyId: "root",
+      secretAccessKey: "root",
+      skipCacheInvalidation: false
     }
   }
 };
