@@ -8,9 +8,9 @@ import { APIGatewayProxyEvent, APIGatewayProxyHandler, APIGatewayProxyResult } f
 
 const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  const userId = getUserId(event);
+  const user = getUserId(event);
   const share = (event.queryStringParameters?.share.toLocaleLowerCase() === 'true');
-  const notes = await new noteLogic().getNote(userId, share);
+  const notes = await new noteLogic().getNote(user.Id, share);
 
   if(!notes){
     return formatJSONResponse(404,  {

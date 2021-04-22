@@ -1,4 +1,4 @@
-import { note, noteInit } from "@models/note";
+import { iNote, noteInit } from "@models/note";
 import {createLogger} from "@libs/logger"
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
@@ -24,7 +24,7 @@ export class noteAdapter{
    * @param userId 
    * @returns 
    */
-  async getNote(userId:string, shared:boolean = false):Promise<note[]>{
+  async getNote(userId:string, shared:boolean = false):Promise<iNote[]>{
 
     this.logger.info("Get items from DB for userId " + userId);
 
@@ -71,7 +71,7 @@ export class noteAdapter{
       res.forEach((x, i) => {
         res[i] = convDBItemTonote(x as DbItem)
       })
-      return res as note[];
+      return res as iNote[];
     }
     catch (error) {
       this.logger.error("Dynamodb Error: " + error )
@@ -84,7 +84,7 @@ export class noteAdapter{
    * @param note 
    * @returns 
    */
-  async putPost(note: note): Promise<note> {
+  async putPost(note: iNote): Promise<iNote> {
       
     this.logger.info("Item to add to the DB: " + JSON.stringify(note)); 
 
@@ -152,20 +152,20 @@ export class noteAdapter{
    * @param body 
    * @returns 
    */
-  async Update(noteId: string, body: noteInit):Promise<any> {
+  async Update(noteId: string, body: any): Promise<any> {
 
-   //Create the expression dynamically
-   var UpdateExpression = "set ";
-   var ExpressionAttributeValues = {}
-   for(const prop in body){
-     if(body.hasOwnProperty(prop)){
-       ExpressionAttributeValues[`:${prop}`] = body[prop];
-       UpdateExpression += `payload.${prop} = :${prop}, ` 
-     }
-   }
-   UpdateExpression = UpdateExpression.slice(0, -2); 
-   this.logger.info(`UpdateExpression: ${UpdateExpression}`);
-   this.logger.info(`ExpressionAttributeValues: ${JSON.stringify(ExpressionAttributeValues)}`)
+    //Create the expression dynamically
+    var UpdateExpression = "set ";
+    var ExpressionAttributeValues = {}
+    for (const prop in body) {
+      if (body.hasOwnProperty(prop)) {
+        ExpressionAttributeValues[`:${prop}`] = body[prop];
+        UpdateExpression += `payload.${prop} = :${prop}, `
+      }
+    }
+    UpdateExpression = UpdateExpression.slice(0, -2);
+    this.logger.info(`UpdateExpression: ${UpdateExpression}`);
+    this.logger.info(`ExpressionAttributeValues: ${JSON.stringify(ExpressionAttributeValues)}`)
 
     try {
       //Read the permissions for the note
@@ -233,7 +233,7 @@ export class noteAdapter{
    * @param noteId 
    * @param fileId 
    */
-  async AddAttachment(noteId: string, fileId: string): Promise<any> {
+  async AddAttachment(noteId: string, fileId: string, LastUpdateBy: string = "unknown", LastUpdateOn:string = "unknown"): Promise<any> {
     try {
       //Read the permissions for the note
       const params = {
@@ -244,10 +244,12 @@ export class noteAdapter{
         },
         ExpressionAttributeValues: {
           ':attachment': [fileId],
-          ':attachmentStr': fileId
+          ':attachmentStr': fileId,
+          ':LastUpdateBy': LastUpdateBy,
+          ':LastUpdateOn': LastUpdateOn
         },
         ConditionExpression: "not contains(payload.attachment, :attachmentStr)",
-        UpdateExpression: "set payload.attachment = list_append(payload.attachment, :attachment)",
+        UpdateExpression: "set payload.attachment = list_append(payload.attachment, :attachment), payload.LastUpdateBy = :LastUpdateBy, payload.LastUpdateOn = :LastUpdateOn",
         ReturnValues: 'ALL_NEW',
       };
       return await this.docClient.update(params).promise();

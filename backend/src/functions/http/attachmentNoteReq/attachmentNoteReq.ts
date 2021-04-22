@@ -10,13 +10,13 @@ const logger = createLogger('postNoteReq');
 
 export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
-  const userId = getUserId(event);
+  const user = getUserId(event);
   const {noteId} = event.pathParameters;
 
   try{
 
     logger.info(`Attchment for NoteId ${noteId}`);
-    const url = await new noteLogic().getUrlAttachment(userId, noteId);
+    const url = await new noteLogic().getUrlAttachment(user, noteId);
 
     return formatJSONResponse(200,  {
       message: {preSignedUrl: url}

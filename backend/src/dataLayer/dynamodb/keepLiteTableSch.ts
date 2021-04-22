@@ -1,31 +1,18 @@
-import { note as Note } from "@models/note";
+import { iNote, noteSchema } from "@models/note";
 import { FromSchema } from "json-schema-to-ts";
 
+
+const {properties} = noteSchema;
+const {noteId, ...others} = properties;
 
 export const DbItemSchema = {
     type: "object",
     properties: {
-        PK: { type: "string"},
-        SK: { type: "string"},
-        userId: {type: "string"},
-        permissions:{type: "string"},
-        payload: {
-            type: "object",
-            properties: {
-                body: { type: "string"},
-                label: { type: "string"},
-                reminder: { type: "string"},
-                attachment:{   
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-            }
-        },
+        PK: noteId,
+        SK: {type:"string"},
+        ...others
     },
     required:["PK", "SK", "userId", "permissions", "payload"]
-    
 } as const;
 
 export interface DbItem extends FromSchema<typeof DbItemSchema> {}
@@ -35,9 +22,9 @@ export interface DbItem extends FromSchema<typeof DbItemSchema> {}
  * @param note 
  * @returns 
  */
-export function convNotetoDBItem(note: Note): DbItem{
+export function convNotetoDBItem(note: iNote): DbItem{
     const {noteId, ...others} = note;
-    return {PK: note.noteId, SK: "BODY", permissions: "O", ...others} as DbItem;
+    return {PK: note.noteId, SK: "BODY", ...others} as DbItem;
 }
 
 /**
@@ -45,8 +32,8 @@ export function convNotetoDBItem(note: Note): DbItem{
  * @param note 
  * @returns 
  */
- export function convDBItemTonote(item: DbItem): Note{
+ export function convDBItemTonote(item: DbItem): iNote{
     const {PK, SK, ...others} = item;
-    return {noteId: PK, ...others} as Note;
+    return {noteId: PK, ...others} as iNote;
 }
 

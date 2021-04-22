@@ -24,6 +24,9 @@ export const noteSchema = {
         body: { type: "string" },
         label: { type: "string" },
         reminder: { type: "string" },
+        owner:{ type: "string" },
+        LastUpdateBy:{ type: "string" },
+        LastUpdateOn:{ type: "string" },
         attachment: {
           "type": "array",
           "items": {
@@ -37,5 +40,5 @@ export const noteSchema = {
   required:["noteId", "userId", "permissions", "payload"]
 } as const;
 
-export interface note extends FromSchema<typeof noteSchema> { }
+export interface iNote extends FromSchema<typeof noteSchema> { }
 

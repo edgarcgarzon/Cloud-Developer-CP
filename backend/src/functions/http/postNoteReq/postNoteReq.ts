@@ -11,11 +11,11 @@ const logger = createLogger('postNoteReq');
 
 export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   
-  const userId = getUserId(event);
+  const user = getUserId(event);
   const body:noteInit = JSON.parse(event.body);
   logger.info("Note input: " + event.body);
 
-  const notes = await new noteLogic().putNote(userId, body);
+  const notes = await new noteLogic().putNote(user, body);
 
   if(!notes){
     return formatJSONResponse(502,  {

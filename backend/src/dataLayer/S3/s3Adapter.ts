@@ -18,7 +18,7 @@ export class s3Adapter {
      * @param fileId 
      * @returns 
      */
-    getGetUrl(postId: string, fileId:string){
+    getGetUrl(postId: string, fileId:string):string{
 
         this.logger.info(`Get signed URL for key: ${postId}/${fileId}`)
 
@@ -34,15 +34,26 @@ export class s3Adapter {
      * @param fileId 
      * @returns 
      */
-    getUploadUrl(postId:string, fileId: string) {
+    getUploadUrl(postId:string, fileId: string, publisher: string):string {
 
         this.logger.info(`Get signed URL for key: ${postId}/${fileId}`)
 
         return this.s3.getSignedUrl('putObject', {
           Bucket: this.attchmentBucketName,
           Key: `${postId}/${fileId}`,
-          Expires: Number(this.urlExpiration)
+          Expires: Number(this.urlExpiration),
+          Metadata: {
+            publisher: `${publisher}`
+          }
         })
+    }
+
+    async getMetadata(key:string):Promise<any>{
+      const data = await this.s3.headObject({
+        Bucket: this.attchmentBucketName,
+        Key:key}).promise()
+      
+        return data['Metadata']
     }
 }
 

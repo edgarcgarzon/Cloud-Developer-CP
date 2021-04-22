@@ -1,9 +1,10 @@
 import { noteAdapter } from "@dataLayer/dynamodb/noteAdapter";
-import { noteInit, note } from "@models/note";
+import { noteInit, iNote } from "@models/note";
 import {createLogger} from "@libs/logger"
 import * as uuid from 'uuid'
 import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
 import { s3Adapter } from "@dataLayer/S3/s3Adapter";
+import { iUser } from "@models/user";
 
 
 export class noteLogic{
@@ -28,19 +29,22 @@ export class noteLogic{
         return notes;
     }
 
-    async putNote(userId: string, note:noteInit):Promise<note>{
+    async putNote(userId: iUser, note:noteInit):Promise<iNote>{
 
         this.logger.info("put note: " + JSON.stringify(note) + " for userId: " + userId);
 
         //Create the complete body of the note before add it into the DB
-        var newNote: note ={
+        var newNote: iNote ={
             noteId: uuid.v4(),
-            userId: userId,
+            userId: userId.Id,
             permissions: "O",
             payload:{
                 body: note.body? note.body: "",
                 label: note.label? note.label: "",
                 reminder: note.reminder? note.reminder : "",
+                owner: userId.email,
+                LastUpdateBy: userId.email,
+                LastUpdateOn: new Date().toLocaleString(),
                 attachment: []
             }
         }
@@ -50,21 +54,23 @@ export class noteLogic{
 
     /**
      * 
-     * @param userId 
+     * @param user 
      * @param noteId 
      * @param body 
      * @returns 
      */
-    async updateNote(userId: string, noteId:string, body: noteInit) {
+    async updateNote(user: iUser, noteId:string, body: noteInit) {
         
         //Get permissions
-        this.logger.info("Get permissions for userId: " + userId + " noteId: " + noteId);
-        var perms = await new noteAdapter().getPerms(userId, noteId);
+        this.logger.info("Get permissions for userId: " + user + " noteId: " + noteId);
+        var perms = await new noteAdapter().getPerms(user.Id, noteId);
         this.logger.info("Permissions: " + perms);        
 
         //If permission allow it, update the note
         if(perms.includes("O") || perms.includes("W"))
         {
+            body["LastUpdateBy"] = user.email;
+            body["LastUpdateOn"] = new Date().toLocaleString();
             this.logger.info(`Update the note Id: ${noteId} with ${JSON.stringify(body)}` );
             return await new noteAdapter().Update(noteId, body);
         }
@@ -105,13 +111,13 @@ export class noteLogic{
 
     /**
      * 
-     * @param userId 
+     * @param user 
      * @param noteId 
      */
-    async getUrlAttachment(userId: string, noteId: string):Promise<string> {
+    async getUrlAttachment(user: iUser, noteId: string):Promise<string> {
 
-        this.logger.info(`Check for user ${userId} pemissions over the note ${noteId}`);
-        var perms = await new noteAdapter().getPerms(userId, noteId);
+        this.logger.info(`Check for user ${user.Id} pemissions over the note ${noteId}`);
+        var perms = await new noteAdapter().getPerms(user.Id, noteId);
 
         console.log(perms);
 
@@ -119,7 +125,7 @@ export class noteLogic{
              throw new Error("User does not have enough permissions to attach items to the note");
         }
 
-        return new s3Adapter().getUploadUrl(noteId, uuid.v4())
+        return new s3Adapter().getUploadUrl(noteId, uuid.v4(), user.email)
     }
 
     /**

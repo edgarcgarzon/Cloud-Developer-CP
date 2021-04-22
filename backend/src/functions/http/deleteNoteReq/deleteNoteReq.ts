@@ -10,12 +10,12 @@ const logger = createLogger('postNoteReq');
 
 export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
 
-  const userId = getUserId(event);
+  const user = getUserId(event);
   const { noteId } = event.pathParameters;
 
   try {
     logger.info(`Delete NoteId ${noteId} `);
-    await new noteLogic().deleteNote(userId, noteId);
+    await new noteLogic().deleteNote(user.Id, noteId);
     return formatJSONResponse(200, {
       message: noteId
     });

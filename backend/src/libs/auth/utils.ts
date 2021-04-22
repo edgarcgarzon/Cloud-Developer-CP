@@ -1,3 +1,4 @@
+import { iUser } from '@models/user'
 import { decode } from 'jsonwebtoken'
 
 import { JwtPayload } from './JwtPayload'
@@ -7,7 +8,7 @@ import { JwtPayload } from './JwtPayload'
  * @param jwtToken JWT token to parse
  * @returns a user id from the JWT token
  */
-export function parseUserId(jwtToken: string): string {
+export function parseUserId(jwtToken: string): iUser {
   const decodedJwt = decode(jwtToken) as JwtPayload
-  return decodedJwt.sub
+  return {Id: decodedJwt.sub, email: decodedJwt.email} as iUser;
 }
