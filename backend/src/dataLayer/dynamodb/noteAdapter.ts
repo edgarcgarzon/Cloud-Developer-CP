@@ -4,12 +4,11 @@ import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { convDBItemTonote, convNotetoDBItem, DbItem } from "./keepLiteTableSch";
+import { iUser } from "@models/user";
 
 
 
 export class noteAdapter{
-
-
  
   constructor(
       private readonly logger = createLogger('noteAdapter'),
@@ -74,6 +73,41 @@ export class noteAdapter{
       return res as iNote[];
     }
     catch (error) {
+      this.logger.error("Dynamodb Error: " + error )
+      throw new Error("Internal error")
+    }
+  }
+
+  /**
+   * 
+   * @param noteId 
+   */
+  async getUsers(noteId: any):Promise<iUser[]> {
+    try {
+        //Read notes from DB
+        const notes = await this.docClient.query({
+          TableName: this.NoteLiteTable,
+          KeyConditionExpression: 'PK = :noteId',
+          ExpressionAttributeValues: {
+            ':noteId': noteId
+          }
+        }).promise();
+
+        var users = [];
+        notes.Items.forEach( x => {
+          var item = x as DbItem;
+
+          if(item.SK == "BODY"){
+            users.push({Id: item.PK, email:item.payload.owner})
+          }
+          if(item.SK.includes("SHARE#")){
+            users.push({Id: item.PK, email:item.email})
+          }
+        });
+
+        return users;
+    }
+    catch(error){
       this.logger.error("Dynamodb Error: " + error )
       throw new Error("Internal error")
     }
@@ -192,15 +226,16 @@ export class noteAdapter{
    * @param noteId 
    * @param targetUserId 
    */
-  async shareNote(noteId: string, targetUserId: string, permissions:string):Promise<any> {
+  async shareNote(noteId: string, targetUser: iUser, permissions:string):Promise<any> {
 
-    this.logger.info(`Add/delete share item noteId "${noteId}" with user "${targetUserId}" and permissions "${permissions}"`); 
+    this.logger.info(`Add/delete share item noteId "${noteId}" with user "${targetUser.Id}" and permissions "${permissions}"`); 
 
     const item = {
       PK:noteId,
-      SK: `SHARE#${targetUserId}`,
-      userId: targetUserId,
-      permissions: permissions
+      SK: `SHARE#${targetUser.Id}`,
+      userId: targetUser.Id,
+      permissions: permissions,
+      email: targetUser.email
     }
 
     try {

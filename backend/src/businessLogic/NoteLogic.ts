@@ -5,7 +5,7 @@ import * as uuid from 'uuid'
 import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
 import { s3Adapter } from "@dataLayer/S3/s3Adapter";
 import { iUser } from "@models/user";
-import { SQSAdapter } from "@dataLayer/sqs/SQSAdapter";
+import { notificationLogic } from "@businessLogic/notificationLogic";
 
 
 export class noteLogic{
@@ -75,7 +75,8 @@ export class noteLogic{
             this.logger.info(`Update the note Id: ${noteId} with ${JSON.stringify(body)}` );
             const note = await new noteAdapter().Update(noteId, body);
 
-            new SQSAdapter().sendMessage("Message update",{user: user, noteId:noteId, body: body})
+            //Send notification
+            new notificationLogic().sendNotification({message: "updateNote", user: user, noteId:noteId, body: body})
 
             return note;
         }
@@ -105,7 +106,7 @@ export class noteLogic{
         }
 
         this.logger.info('Add the share item to the DB')
-        var shareItem = await new noteAdapter().shareNote(noteId, targetUserId, permissions);
+        var shareItem = await new noteAdapter().shareNote(noteId, {Id:targetUserId, email: targetUserEmail}, permissions);
 
         if(!shareItem){
             throw new Error(`Internal problem sharing`)

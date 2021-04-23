@@ -6,7 +6,7 @@ export const userSchema = {
       Id: { type: "string" },
       email: { type: "string" },
     },
-    required:["userId"]
+    required:["Id"]
   } as const;
   
   export interface iUser extends FromSchema<typeof userSchema> { }
