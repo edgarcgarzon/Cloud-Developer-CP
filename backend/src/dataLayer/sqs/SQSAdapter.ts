@@ -1,6 +1,9 @@
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import {createLogger} from "@libs/logger"
+import { iNotification } from '@models/notification';
+import { SQSRecord } from "aws-lambda";
+import { notificationLogic } from '@businessLogic/NotificationLogic';
 
 
 export class SQSAdapter {
@@ -31,7 +34,7 @@ export class SQSAdapter {
      * @param attributes 
      * @param messageBody 
      */
-    async sendMessage( messageBody:string, messageAttributes:any) {
+    async sendMessage(notification:iNotification) {
 
         const queueURL = await this.getQueueUrl();
         this.logger.info(`queueURL: ${queueURL}`)
@@ -42,14 +45,14 @@ export class SQSAdapter {
         var MessageAttributes = {};
         MessageAttributes["CustomAttr"] = {
             DataType: "String",
-            StringValue: JSON.stringify(messageAttributes)
+            StringValue: JSON.stringify(notification)
         }
 
         //Set parameters
         var params = {
            DelaySeconds: 5,
            MessageAttributes: MessageAttributes,
-           MessageBody: messageBody,
+           MessageBody: "note-lite",
            QueueUrl: queueURL
          };
         
@@ -64,6 +67,17 @@ export class SQSAdapter {
                 }
             }
         )
+    }
+
+    /**
+     * 
+     * @param record 
+     * @returns 
+     */
+    receiveMessageEvent(record: SQSRecord){
+        const notification:iNotification = JSON.parse(record.messageAttributes.CustomAttr.stringValue);
+        new notificationLogic().NotificationEvent(notification);
+        this.logger.info(`New notification: ${JSON.stringify(notification)}`);
     }
 }
 

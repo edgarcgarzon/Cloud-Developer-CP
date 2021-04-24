@@ -16,10 +16,10 @@ export const api: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent): 
   try{
 
     logger.info(`Attchment for NoteId ${noteId}`);
-    const url = await new noteLogic().getUrlAttachment(user, noteId);
+    const presignedURL = await new noteLogic().getUrlAttachment(user, noteId);
 
     return formatJSONResponse(200,  {
-      message: {preSignedUrl: url}
+      message: presignedURL
     });
   }
   catch(err){

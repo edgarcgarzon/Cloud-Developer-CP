@@ -1,12 +1,10 @@
-import { iNote, noteInit } from "@models/note";
+import { iNote } from "@models/note";
 import {createLogger} from "@libs/logger"
 import * as AWS  from 'aws-sdk'
 import * as AWSXRay from 'aws-xray-sdk'
 import { DocumentClient } from 'aws-sdk/clients/dynamodb'
 import { convDBItemTonote, convNotetoDBItem, DbItem } from "./keepLiteTableSch";
 import { iUser } from "@models/user";
-
-
 
 export class noteAdapter{
  
@@ -268,9 +266,9 @@ export class noteAdapter{
    * @param noteId 
    * @param fileId 
    */
-  async AddAttachment(noteId: string, fileId: string, LastUpdateBy: string = "unknown", LastUpdateOn:string = "unknown"): Promise<any> {
+  async AddAttachment(noteId: string, fileId: string, user: iUser, LastUpdateOn:string = "unknown"): Promise<any> {
     try {
-      //Read the permissions for the note
+      //update the attachments
       const params = {
         TableName: this.NoteLiteTable,
         Key: {
@@ -280,14 +278,18 @@ export class noteAdapter{
         ExpressionAttributeValues: {
           ':attachment': [fileId],
           ':attachmentStr': fileId,
-          ':LastUpdateBy': LastUpdateBy,
+          ':LastUpdateBy': user.email,
           ':LastUpdateOn': LastUpdateOn
         },
         ConditionExpression: "not contains(payload.attachment, :attachmentStr)",
         UpdateExpression: "set payload.attachment = list_append(payload.attachment, :attachment), payload.LastUpdateBy = :LastUpdateBy, payload.LastUpdateOn = :LastUpdateOn",
         ReturnValues: 'ALL_NEW',
       };
-      return await this.docClient.update(params).promise();
+      
+      const res = await this.docClient.update(params).promise();
+      this.logger.info(`Attachment ${fileId} added to item: ${JSON.stringify(noteId)}`);
+
+      return res;
     }
     catch (error) {
       this.logger.error(`Error adding attachment to the item: ${noteId}: ${error} `);

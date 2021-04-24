@@ -5,11 +5,11 @@ import * as uuid from 'uuid'
 import { auth0Adapter } from "@dataLayer/auth0/auth0Adapter";
 import { s3Adapter } from "@dataLayer/S3/s3Adapter";
 import { iUser } from "@models/user";
-import { notificationLogic } from "@businessLogic/notificationLogic";
+import { notificationLogic } from "@businessLogic/NotificationLogic";
+import { iNotification } from "@models/notification";
 
 
 export class noteLogic{
-
 
     constructor(
         private readonly logger = createLogger('NoteLogic'),
@@ -120,7 +120,7 @@ export class noteLogic{
      * @param user 
      * @param noteId 
      */
-    async getUrlAttachment(user: iUser, noteId: string):Promise<string> {
+    async getUrlAttachment(user: iUser, noteId: string):Promise<{id:string, url:string}> {
 
         this.logger.info(`Check for user ${user.Id} pemissions over the note ${noteId}`);
         var perms = await new noteAdapter().getPerms(user.Id, noteId);
@@ -130,8 +130,8 @@ export class noteLogic{
         if(!perms.includes("O") && !perms.includes("W")){
              throw new Error("User does not have enough permissions to attach items to the note");
         }
-
-        return new s3Adapter().getUploadUrl(noteId, uuid.v4(), user.email)
+        const id = uuid.v4();
+        return {id: id, url: new s3Adapter().getUploadUrl(noteId, id, user)}
     }
 
     /**
@@ -150,6 +150,27 @@ export class noteLogic{
 
         //Delete note
         await noteAdapterHdl.delete(noteId);
+    }
+    
+    /**
+     * 
+     * @param noteId 
+     * @param fileId 
+     * @param user 
+     * @param arg3 
+     */
+    AddAttachment(noteId: string, fileId: string, user: iUser) {
+
+        new noteAdapter().AddAttachment(noteId, fileId, user, new Date().toLocaleString());
+
+        //send the notification of add attachment
+        const notification: iNotification = {
+            message: "AddAttachment",
+            user: user,
+            noteId: noteId,
+        }
+        new notificationLogic().sendNotification(notification)
+
     }
 }
  

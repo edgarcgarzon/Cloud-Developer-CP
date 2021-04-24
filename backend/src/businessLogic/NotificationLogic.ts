@@ -12,8 +12,7 @@ export class notificationLogic{
      * @param notification 
      */
     sendNotification(notification:iNotification){
-        const {message, ...others} = notification;
-        new SQSAdapter().sendMessage(message,others);
+        new SQSAdapter().sendMessage(notification);
     }
 
     /**
