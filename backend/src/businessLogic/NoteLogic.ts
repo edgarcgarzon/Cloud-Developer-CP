@@ -144,7 +144,7 @@ export class noteLogic{
         const noteAdapterHdl = new noteAdapter();
         const perms = await noteAdapterHdl.getPerms(userId, noteId);
 
-        if(!perms.includes("O")){
+        if(!perms?.includes("O")){
             throw new Error("User does not have enough permission to delete the note")
         }
 
@@ -159,9 +159,9 @@ export class noteLogic{
      * @param user 
      * @param arg3 
      */
-    AddAttachment(noteId: string, fileId: string, user: iUser) {
+    async AddAttachment(noteId: string, fileId: string, user: iUser) {
 
-        new noteAdapter().AddAttachment(noteId, fileId, user, new Date().toLocaleString());
+        await new noteAdapter().AddAttachment(noteId, fileId, user, new Date().toLocaleString());
 
         //send the notification of add attachment
         const notification: iNotification = {
@@ -169,7 +169,7 @@ export class noteLogic{
             user: user,
             noteId: noteId,
         }
-        new notificationLogic().sendNotification(notification)
+        await new notificationLogic().sendNotification(notification)
 
     }
 }
