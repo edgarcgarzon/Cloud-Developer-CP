@@ -5,7 +5,9 @@
   "main": "serverless.ts",
   "scripts": {
     "scan": "aws dynamodb scan --table-name NOTE_LITE_TABLE-dev --endpoint-url http://localhost:8000",
-    "sqs": "aws sqs --endpoint-url http://localhost:9324 create-queue --queue-name SQS_NOTIFICATION}-dev",
+    "sqs_start": "cd .sqs-offline-setup && sudo docker-compose up -d && cd ..",
+    "offline": "sls offline start",
+    "deploy": "sls deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {

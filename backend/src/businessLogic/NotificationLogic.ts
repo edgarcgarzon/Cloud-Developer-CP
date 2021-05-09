@@ -1,10 +1,12 @@
 import { noteAdapter } from "@dataLayer/dynamodb/noteAdapter";
 import { SQSAdapter } from "@dataLayer/sqs/SQSAdapter";
 import { iNotification } from "@models/notification";
+import {createLogger} from "@libs/logger"
+import { SESAdapter } from "@dataLayer/ses/SESAdapter";
 
 
 export class notificationLogic{
-    constructor(){
+    constructor(private readonly logger = createLogger('s3Adapter'),){
         
     }
     /**
@@ -22,18 +24,20 @@ export class notificationLogic{
     async NotificationEvent(notification:iNotification){
 
         //Read all users with notId
-        const users = await new noteAdapter().getUsers(notification.noteId);
+        var users = await new noteAdapter().getUsers(notification.noteId);
 
         //filter the one that update the message
-        users.filter( x => {
-                x.email != notification.user.email;
+        users = users.filter( x => {
+                return x.email != notification.user.email;
         });
 
-        //Send an email to the rest
-        users.forEach( user => {
-            
-        })
+        const emails = users.map(x => x.email);
 
+        this.logger.info(`users to send notification email: ${JSON.stringify(emails)}`)
 
+        const subject = `Note-Lite-App: Note shared with you has been updated`;
+        const body = `The note ${notification.noteId} has been updated by ${notification.user.email}`
+
+        new SESAdapter().sendMessage(emails,[], subject, body);
     }
 }

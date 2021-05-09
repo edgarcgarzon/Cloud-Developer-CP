@@ -43,7 +43,8 @@ const serverlessConfiguration: AWS = {
       AUTH0_DOMAIN: "${ssm:auth0-domain~true}",
       AUTH0_SLS_APP_M2M_CLIENT_ID: "${ssm:auth0-serverless-app-M2M-ClientID~true}",
       AUT0_SLS_APP_M2M_CLIENT_SECRET: "${ssm:auth0-serverless-app-M2M-ClientSecret~true}",
-      SQS_NOTIFICATION: "SQS_NOTIFICATION-${self:provider.stage}"
+      SQS_NOTIFICATION: "SQS_NOTIFICATION-${self:provider.stage}",
+      APP_EMAIL: "note.lite.app@gmail.com ",
     },
     tracing:{
       lambda: true,

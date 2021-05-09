@@ -8,7 +8,7 @@ import { noteLogic } from '@businessLogic/NoteLogic'
 export class s3Adapter {
 
     constructor(
-      private readonly logger = createLogger('noteAdapter'),
+      private readonly logger = createLogger('s3Adapter'),
       private readonly attchmentBucketName = process.env.S3_BUCKET_ATTACH,
       private readonly urlExpiration = process.env.S3_BUCKET_ATTACH_SIG_URL_EXPIRATION,
       private readonly s3 = CreateS3Client()) {
