@@ -77,7 +77,7 @@ export class s3Adapter {
             email:metadata["useremail"]
         }
 
-        new noteLogic().AddAttachment(noteId, fileId, user);
+        await new noteLogic().AddAttachment(noteId, fileId, user);
         
     }
 }

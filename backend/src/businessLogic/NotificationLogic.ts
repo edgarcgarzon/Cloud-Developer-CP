@@ -13,7 +13,7 @@ export class notificationLogic{
      * 
      * @param notification 
      */
-    sendNotification(notification:iNotification){
+    async  sendNotification(notification:iNotification){
         new SQSAdapter().sendMessage(notification);
     }
 
