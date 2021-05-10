@@ -1,0 +1,291 @@
+{
+	"info": {
+		"_postman_id": "740f8aa9-1c16-4e8e-bfbb-eb71e27d5d04",
+		"name": "Note-Lite-App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get Note",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{host}}/note?share=false",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note"
+					],
+					"query": [
+						{
+							"key": "share",
+							"value": "false"
+						}
+					]
+				},
+				"description": "# Get notes associated to the login user.\n\n## Query parameters\n| Parameter | Description |\n| ----------- | ----------- |\n| share | false: (default) Get only notes created by the login user <br> true:   Get notes shared with the login user. |\n\n- Note: The login user is extracted from the authorization token data."
+			},
+			"response": []
+		},
+		{
+			"name": "Post Note",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"body\": \"this is a note\",\r\n    \"label\": \"TODO\",\r\n    \"reminder\": \"20210521120000\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{host}}/note",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note"
+					],
+					"query": [
+						{
+							"key": "label",
+							"value": "label",
+							"disabled": true
+						}
+					]
+				},
+				"description": "# Post a new note\n\n## Body\nJSON\n\n| key | optional | description |\n| ----------- | ----------- | ----------- |\n| body | yes | Text of the note (e.g. \"this is a note\") |\n| label | yes | Label of the note (e.g. \"TODO\") |\n| reminder | yes | time for reminder YYYYMMDDThhmmss (e.g. \"20210521120000\" it means May-21-2021 at 12:00:00 ) |"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Note",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"body\": \"this is a MODIFIED note\",\r\n    \"label\": \"MODIFIED\",\r\n    \"reminder\": \"20210521130102\"\r\n}"
+				},
+				"url": {
+					"raw": "{{host}}/note/7b49aaf8-5316-4fca-b3d2-be7afbcff95b",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note",
+						"7b49aaf8-5316-4fca-b3d2-be7afbcff95b"
+					],
+					"query": [
+						{
+							"key": "label",
+							"value": "label",
+							"disabled": true
+						}
+					]
+				},
+				"description": "# Update an existing note.\n\n## Body: \n| key | optional | description |\n| ----------- | ----------- | ----------- |\n| body | yes | Text of the note (e.g. \"this is a note\") |\n| label | yes | Label of the note (e.g. \"TODO\") |\n| reminder | yes | time for reminder YYYYMMDDThhmmss (e.g. \"20210521120000\" it means May-21-2021 at 12:00:00 ) |\n\n## Path parameters:\n\n| Parameter | Description |\n| ----------- | ----------- |\n| id | Note id to be updated |"
+			},
+			"response": []
+		},
+		{
+			"name": "Share Note",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "",
+						"type": "text",
+						"value": "",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"noteId\": \"7b49aaf8-5316-4fca-b3d2-be7afbcff95b\",\r\n    \"email\": \"note.lite.app@gmail.com\",\r\n    \"permissions\": \"RW\"\r\n}\r\n"
+				},
+				"url": {
+					"raw": "{{host}}/note/share",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note",
+						"share"
+					],
+					"query": [
+						{
+							"key": "label",
+							"value": "label",
+							"disabled": true
+						}
+					]
+				},
+				"description": "# Share a note\n\n## Body\nJSON\n\n| key | optional | description |\n| ----------- | ----------- | ----------- |\n| noteId | no | note id to be share <br> - The note shall be created by the logi user  |\n| email | no | email of the user to share the note <br> -The user shall be registered in the app (must login at least one time using the same email) |\n| permissions | not | Permissions of grant to the user for the note <br> -\"R\": read (the user can only see the note) <br> -\"RW\": read and write (the user can modify the note but not share) <br> -\"\":stop sharing|"
+			},
+			"response": []
+		},
+		{
+			"name": "Attachment Note",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{host}}/note/6cf6ff1c-9979-4a35-aa75-4cac7d01c65e/attachment",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note",
+						"6cf6ff1c-9979-4a35-aa75-4cac7d01c65e",
+						"attachment"
+					],
+					"query": [
+						{
+							"key": "label",
+							"value": "label",
+							"disabled": true
+						}
+					]
+				},
+				"description": "# Get a pre-signed URL to add an attachment to a note\n\n## Path parameters:\n\n| Parameter | Description |\n| ----------- | ----------- |\n| id | Note id to attach the new file|"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Note",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "",
+						"value": "",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"url": {
+					"raw": "{{host}}/note/6cf6ff1c-9979-4a35-aa75-4cac7d01c65e",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"note",
+						"6cf6ff1c-9979-4a35-aa75-4cac7d01c65e"
+					],
+					"query": [
+						{
+							"key": "label",
+							"value": "label",
+							"disabled": true
+						}
+					]
+				},
+				"description": "# Delete a note\n\n## Path parameters:\n\n| Parameter | Description |\n| ----------- | ----------- |\n| id | Note id to be deleted |"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "http://localhost:3000"
+		},
+		{
+			"key": "token",
+			"value": "token"
+		},
+		{
+			"key": "apiId",
+			"value": "0ohx0w64te"
+		}
+	]
+}

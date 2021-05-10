@@ -1,0 +1,274 @@
+{
+  "ModelName": "keep-lite2",
+  "ModelMetadata": {
+    "Author": "Edgar Garzon",
+    "DateCreated": "Apr 15, 2021, 06:16 PM",
+    "DateLastModified": "Apr 22, 2021, 10:19 AM",
+    "Description": "",
+    "AWSService": "Amazon DynamoDB",
+    "Version": "2.0"
+  },
+  "DataModel": [
+    {
+      "TableName": "keep-lite-2",
+      "KeyAttributes": {
+        "PartitionKey": {
+          "AttributeName": "PK",
+          "AttributeType": "S"
+        },
+        "SortKey": {
+          "AttributeName": "SK",
+          "AttributeType": "S"
+        }
+      },
+      "NonKeyAttributes": [
+        {
+          "AttributeName": "SGI-1-PK",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "permissions",
+          "AttributeType": "S"
+        },
+        {
+          "AttributeName": "payload",
+          "AttributeType": "M"
+        }
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "SGI1",
+          "KeyAttributes": {
+            "PartitionKey": {
+              "AttributeName": "SGI-1-PK",
+              "AttributeType": "S"
+            },
+            "SortKey": {
+              "AttributeName": "PK",
+              "AttributeType": "S"
+            }
+          },
+          "Projection": {
+            "ProjectionType": "ALL"
+          }
+        }
+      ],
+      "TableData": [
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "SGI-1-PK": {
+            "S": "USER#AAA"
+          },
+          "permissions": {
+            "S": "O"
+          },
+          "payload": {
+            "M": {
+              "body": "some message",
+              "label": "todo",
+              "reminder": "",
+              "owner": "USER#xxx@gmail.com",
+              "attachment": [
+                "Giraffe.jpg",
+                "Hippo.png",
+                "Zebra.gif"
+              ],
+              "LastUpdateBy": "USER#xxx@gmail.com",
+              "LastUpdateOn": ""
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "SHARE | USER#BBB"
+          },
+          "SGI-1-PK": {
+            "S": "USER#BBB"
+          },
+          "permissions": {
+            "S": "RW"
+          },
+          "payload": {
+            "M": {
+              "email": "USER#BBB@gmail.com"
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#111"
+          },
+          "SK": {
+            "S": "SHARE | USER#CCC"
+          },
+          "SGI-1-PK": {
+            "S": "USER#CCC"
+          },
+          "permissions": {
+            "S": "RW"
+          },
+          "payload": {
+            "M": {
+              "email": "USER#CCC@gmail.com"
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "SGI-1-PK": {
+            "S": "USER#BBB"
+          },
+          "permissions": {
+            "S": "O"
+          },
+          "payload": {
+            "M": {
+              "body": "some message",
+              "label": "todo",
+              "reminder": "",
+              "owner": "USER#xxx@gmail.com",
+              "attachment": [
+                "Giraffe.jpg",
+                "Hippo.png",
+                "Zebra.gif"
+              ],
+              "LastUpdateBy": "USER#xxx@gmail.com",
+              "LastUpdateOn": ""
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "SHARE | USER#AAA"
+          },
+          "SGI-1-PK": {
+            "S": "USER#AAA"
+          },
+          "permissions": {
+            "S": "R"
+          },
+          "payload": {
+            "M": {
+              "email": "USER#AAA@gmail.com"
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#222"
+          },
+          "SK": {
+            "S": "SHARE | USER#CCC"
+          },
+          "SGI-1-PK": {
+            "S": "USER#CCC"
+          },
+          "permissions": {
+            "S": "R"
+          },
+          "payload": {
+            "M": {
+              "email": "USER#CCC@gmail.com"
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#333"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "SGI-1-PK": {
+            "S": "USER#AAA"
+          },
+          "permissions": {
+            "S": "O"
+          },
+          "payload": {
+            "M": {
+              "body": "some message",
+              "label": "todo",
+              "reminder": "",
+              "owner": "USER#xxx@gmail.com",
+              "attachment": [
+                "Giraffe.jpg",
+                "Hippo.png",
+                "Zebra.gif"
+              ],
+              "LastUpdateBy": "USER#xxx@gmail.com",
+              "LastUpdateOn": ""
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#444"
+          },
+          "SK": {
+            "S": "BODY"
+          },
+          "SGI-1-PK": {
+            "S": "USER#AAA"
+          },
+          "permissions": {
+            "S": "O"
+          },
+          "payload": {
+            "M": {
+              "body": "some message",
+              "label": "todo",
+              "reminder": "",
+              "owner": "USER#xxx@gmail.com",
+              "attachment": [
+                "Giraffe.jpg",
+                "Hippo.png",
+                "Zebra.gif"
+              ],
+              "LastUpdateBy": "USER#xxx@gmail.com",
+              "LastUpdateOn": ""
+            }
+          }
+        },
+        {
+          "PK": {
+            "S": "NOTE#444"
+          },
+          "SK": {
+            "S": "SHARE | USER#BBB"
+          },
+          "SGI-1-PK": {
+            "S": "USER#BBB"
+          },
+          "permissions": {
+            "S": "RW"
+          },
+          "payload": {
+            "M": {
+              "email": "USER#BBB@gmail.com"
+            }
+          }
+        }
+      ],
+      "DataAccess": {
+        "MySql": {}
+      }
+    }
+  ]
+}
