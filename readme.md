@@ -51,7 +51,7 @@ The application supports a complete serverless offline simulation. To run  the a
 cd backend
 npm install
 npm run sqs_start
-npm run offine
+npm run offline
 ```
 Note: 
 - When working offline, the SSM-offline-plugin is taken the secretes save in the file *".env"*. Change the values in the file [example.env](./backend/example.env) and rename the file to *.env*.
@@ -80,9 +80,9 @@ Set up the env. variables as follow:
 
 # Email notification
 
-Unfortunatelly, in order to be able to send emails to not verified email address using AWS-SES, the sandbox needs to be "move out" as explained [here](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html).
+Unfortunately, in order to be able to send emails to not verified email address using AWS-SES, the sandbox needs to be "move out" as explained [here](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/request-production-access.html).
 <br> For testing the application and receive email notifications, you need to verify the emails as explained [here](https://docs.aws.amazon.com/ses/latest/DeveloperGuide/verify-email-addresses.html).<br>
- However, once the email is verified, your application can send emails from this address. Therefore, for testing this feature is better to create 2/3 dummy users and verified the emails  addresses (do not use your personal email as it will grant rights to the application as explained aboved).<br>
+ However, once the email is verified, your application can send emails from this address. Therefore, for testing this feature is better to create 2/3 dummy users and verified the emails  addresses (do not use your personal email as it will grant rights to the application as explained above).<br>
 
 # Serverless cloud architecture
 
