@@ -39,7 +39,7 @@ export class SQSAdapter {
         const queueURL = await this.getQueueUrl();
         this.logger.info(`queueURL: ${queueURL}`)
         
-        //Convert the message atribute into a messae format
+        //Convert the message attribute into a message format
         //all attributes will be try to convert to string.
         //not nested objects are allowed
         var MessageAttributes = {};
@@ -61,7 +61,7 @@ export class SQSAdapter {
         this.sqs.sendMessage(params,
             function (err, data) {
                 if (err) {
-                    logger.error(`Error sending message in queue ${this.queueName}: ${err}`);
+                    logger.error(`Error sending message in queue ${queueURL}: ${err}`);
                 } else {
                     logger.info(`Message sent in queue ${this.queueName}: message id: ${data.MessageId}`);
                 }
@@ -74,10 +74,9 @@ export class SQSAdapter {
      * @param record 
      * @returns 
      */
-    receiveMessageEvent(record: SQSRecord){
+    async receiveMessageEvent(record: SQSRecord){
         const notification:iNotification = JSON.parse(record.messageAttributes.CustomAttr.stringValue);
-        new notificationLogic().NotificationEvent(notification);
-        this.logger.info(`New notification: ${JSON.stringify(notification)}`);
+        await new notificationLogic().NotificationEvent(notification);
     }
 }
 

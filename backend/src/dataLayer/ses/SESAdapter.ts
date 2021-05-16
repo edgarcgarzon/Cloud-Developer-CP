@@ -19,7 +19,7 @@ export class SESAdapter {
      * @param subject 
      * @param body 
      */
-    sendMessage(TO: string[], CC: string[], subject: string, body: string) {
+    async sendMessage(TO: string[], CC: string[], subject: string, body: string) {
 
         // Create sendEmail params 
         var params = {
@@ -46,10 +46,10 @@ export class SESAdapter {
             ],
         };
 
-        console.log(JSON.stringify(params));
+        this.logger.info(`email params: ${JSON.stringify(params)}`);
 
         const logger = this.logger;
-        this.ses.sendEmail(params).promise().then(function (data) {
+        await this.ses.sendEmail(params).promise().then(function (data) {
             logger.info(`email sent: ${data.MessageId}`);
         }).catch(
             function (err) {

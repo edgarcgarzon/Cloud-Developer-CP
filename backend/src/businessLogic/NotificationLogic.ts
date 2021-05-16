@@ -6,7 +6,7 @@ import { SESAdapter } from "@dataLayer/ses/SESAdapter";
 
 
 export class notificationLogic{
-    constructor(private readonly logger = createLogger('s3Adapter'),){
+    constructor(private readonly logger = createLogger('NotificationLogic'),){
         
     }
     /**
@@ -14,7 +14,7 @@ export class notificationLogic{
      * @param notification 
      */
     async  sendNotification(notification:iNotification){
-        new SQSAdapter().sendMessage(notification);
+        await new SQSAdapter().sendMessage(notification);
     }
 
     /**
@@ -23,21 +23,24 @@ export class notificationLogic{
      */
     async NotificationEvent(notification:iNotification){
 
-        //Read all users with notId
+        this.logger.info(`New notification: ${JSON.stringify(notification)}`);
+
+        //Read all users with noteId
         var users = await new noteAdapter().getUsers(notification.noteId);
 
-        //filter the one that update the message
+        //Filter the one that update the message
         users = users.filter( x => {
                 return x.email != notification.user.email;
         });
+        this.logger.info(`Users to send the notification: ${JSON.stringify(users)}`)
+        
 
         const emails = users.map(x => x.email);
-
-        this.logger.info(`users to send notification email: ${JSON.stringify(emails)}`)
+        this.logger.info(`Users to send notification email: ${JSON.stringify(emails)}`)
 
         const subject = `Note-Lite-App: Note shared with you has been updated`;
         const body = `The note ${notification.noteId} has been updated by ${notification.user.email}`
 
-        new SESAdapter().sendMessage(emails,[], subject, body);
+        await new SESAdapter().sendMessage(emails,[], subject, body);
     }
 }

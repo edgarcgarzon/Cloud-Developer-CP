@@ -28,6 +28,11 @@ export default {
       Effect: "Allow",
       Action: ["dynamodb:PutItem"],
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.NOTE_LITE_TABLE}"
+    },
+    {
+      Effect: "Allow",
+      Action: ["sqs:SendMessage", "sqs:GetQueueUrl"],
+      Resource: { 'Fn::GetAtt': ["SQSNotification", 'Arn'] }
     }
   ]
 }

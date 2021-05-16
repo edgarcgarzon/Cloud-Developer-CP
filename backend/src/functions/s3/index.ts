@@ -26,6 +26,11 @@ export default {
         Effect: "Allow",
         Action: ["s3:ListBucket"],
         Resource: "arn:aws:s3:::${self:provider.environment.S3_BUCKET_ATTACH}"
+      },
+      {
+        Effect: "Allow",
+        Action: ["sqs:SendMessage", "sqs:GetQueueUrl"],
+        Resource: { 'Fn::GetAtt': ["SQSNotification", 'Arn'] }
       }
     ]
 }

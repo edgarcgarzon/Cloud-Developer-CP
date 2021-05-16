@@ -12,6 +12,6 @@ export const handler:SQSHandler = async (event:SQSEvent) => {
         logger.info(`SQS event: ${JSON.stringify(record)}`);
 
         //Parse the message and send notification to logic
-        new SQSAdapter().receiveMessageEvent(record);
+        await new SQSAdapter().receiveMessageEvent(record);
     }    
 }

@@ -80,7 +80,8 @@ export class noteAdapter{
    * 
    * @param noteId 
    */
-  async getUsers(noteId: any):Promise<iUser[]> {
+  async getUsers(noteId: string):Promise<iUser[]> {
+
     try {
         //Read notes from DB
         const notes = await this.docClient.query({
@@ -102,7 +103,7 @@ export class noteAdapter{
             users.push({Id: item.PK, email:item.email})
           }
         });
-
+        
         return users;
     }
     catch(error){

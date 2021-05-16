@@ -76,7 +76,7 @@ export class noteLogic{
             const note = await new noteAdapter().Update(noteId, body);
 
             //Send notification
-            new notificationLogic().sendNotification({message: "updateNote", user: user, noteId:noteId, body: body})
+            await new notificationLogic().sendNotification({message: "updateNote", user: user, noteId:noteId, body: body})
 
             return note;
         }
@@ -90,9 +90,9 @@ export class noteLogic{
      * @param noteId 
      * @param targetUserEmail 
      */
-    async shareNote(ownerUserId:string, noteId:string, targetUserEmail:string, permissions:string):Promise<any>{
+    async shareNote(ownerUserId:iUser, noteId:string, targetUserEmail:string, permissions:string):Promise<any>{
         this.logger.info(`Check for user ${ownerUserId} pemissions over the note ${noteId}`);
-        var perms = await new noteAdapter().getPerms(ownerUserId, noteId);
+        var perms = await new noteAdapter().getPerms(ownerUserId.Id, noteId);
 
         if(!perms.includes("O")){
              throw new Error("User does not have enough permissions to share the note");
@@ -111,6 +111,9 @@ export class noteLogic{
         if(!shareItem){
             throw new Error(`Internal problem sharing`)
         }
+
+        //Send notification
+        await new notificationLogic().sendNotification({message: "Note shared", user: ownerUserId, noteId:noteId})
 
         return {noteId: noteId, userId: targetUserEmail, permissions: permissions};
     }
